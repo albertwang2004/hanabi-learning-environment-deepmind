@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-build/cmake_install.cmake",
+		"/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-build/hanabi_learning_environment/hanabi_lib/cmake_install.cmake",
+		"/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-build/hanabi_learning_environment/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

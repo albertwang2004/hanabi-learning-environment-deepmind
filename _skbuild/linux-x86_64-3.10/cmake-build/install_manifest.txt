@@ -1,0 +1,5 @@
+/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-install/hanabi_learning_environment/libpyhanabi.so
+/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-install/hanabi_learning_environment/__init__.py
+/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-install/hanabi_learning_environment/rl_env.py
+/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-install/hanabi_learning_environment/pyhanabi.py
+/home/albert/hanabi-learning-environment-deepmind/_skbuild/linux-x86_64-3.10/cmake-install/hanabi_learning_environment/pyhanabi.h

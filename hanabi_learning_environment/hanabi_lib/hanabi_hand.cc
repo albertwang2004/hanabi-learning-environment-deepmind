@@ -84,9 +84,13 @@ void HanabiHand::AddCard(HanabiCard card,
   card_knowledge_.push_back(initial_knowledge);
 }
 
-void HanabiHand::InsertCard(HanabiCard card, int card_index) {
+void HanabiHand::InsertCard(HanabiCard card,
+                            const CardKnowledge& initial_knowledge,
+                            int card_index) {
   REQUIRE(card.IsValid());
-  cards_.insert(cards_.begin() + card_index,card);
+  cards_.insert(cards_.begin() + card_index, card);
+  card_knowledge_.insert(card_knowledge_.begin() + card_index,
+                         initial_knowledge);
 }
 
 void HanabiHand::RemoveFromHand(int card_index,

@@ -254,9 +254,18 @@ void HanabiState::ApplyMove(HanabiMove move) {
             card_knowledge);
       }
       break;
-    case HanabiMove::kDealSpecific:
-      hands_[move.TargetOffset()].InsertCard(
-          deck_.DealCard(move.Color(), move.Rank()), move.CardIndex());
+    case HanabiMove::kDealSpecific: {
+        HanabiHand::CardKnowledge card_knowledge(ParentGame()->NumColors(),
+                                      ParentGame()->NumRanks());
+        if (parent_game_->ObservationType() == HanabiGame::kSeer){
+          card_knowledge.ApplyIsColorHint(move.Color());
+          card_knowledge.ApplyIsRankHint(move.Rank());
+        }
+        hands_[move.TargetOffset()].InsertCard(
+            deck_.DealCard(move.Color(), move.Rank()),
+            card_knowledge,
+            move.CardIndex());
+      }
       break;
     case HanabiMove::kDiscard:
       history.information_token = IncrementInformationTokens();
