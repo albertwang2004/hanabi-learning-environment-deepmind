@@ -34,7 +34,9 @@ int PlayerToOffset(int pid, int observer_pid, int num_players) {
 void ChangeHistoryItemToObserverRelative(int observer_pid, int num_players,
                                          bool show_cards,
                                          HanabiHistoryItem* item) {
-  if (item->move.MoveType() == HanabiMove::kDeal) {
+  auto move_type = item->move.MoveType();
+  if (move_type == HanabiMove::kDeal ||
+      move_type == HanabiMove::kDealSpecific) {
     assert(item->player < 0 && item->deal_to_player >= 0);
     item->deal_to_player =
         (item->deal_to_player - observer_pid + num_players) % num_players;

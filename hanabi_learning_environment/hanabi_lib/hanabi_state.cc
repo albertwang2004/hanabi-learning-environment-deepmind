@@ -237,12 +237,20 @@ void HanabiState::ApplyMove(HanabiMove move) {
     std::cerr << "Illegal move rejected in ApplyMove: " << move.ToString()
               << "\nCurrent player: " << cur_player_
               << "\nState before failure:\n"
-              << ToString() << std::endl;
+              << ToString() << "\nMove history (" << move_history_.size()
+              << "):";
+    if (move_history_.empty()) {
+      std::cerr << " <empty>";
+    } else {
+      for (int i = 0; i < move_history_.size(); ++i) {
+        std::cerr << "\n  " << i << ": " << move_history_[i].ToString();
+      }
+    }
+    std::cerr << std::endl;
   }
   REQUIRE(legal);
   // Special moves are virtual moves used to manipulate the game.
-  bool special_move = move.MoveType() == HanabiMove::kDealSpecific ||
-                      move.MoveType() == HanabiMove::kReturn;
+  bool special_move = move.MoveType() == HanabiMove::kReturn;
   if (deck_.Empty() && !special_move) {
     --turns_to_play_;
   }
@@ -269,6 +277,7 @@ void HanabiState::ApplyMove(HanabiMove move) {
           card_knowledge.ApplyIsColorHint(move.Color());
           card_knowledge.ApplyIsRankHint(move.Rank());
         }
+        history.deal_to_player = move.TargetOffset();
         hands_[move.TargetOffset()].InsertCard(
             deck_.DealCard(move.Color(), move.Rank()),
             card_knowledge,

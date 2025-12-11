@@ -35,7 +35,9 @@ const HanabiHistoryItem* GetLastNonDealMove(
     const std::vector<HanabiHistoryItem>& past_moves) {
   auto it = std::find_if(
       past_moves.begin(), past_moves.end(), [](const HanabiHistoryItem& item) {
-        return item.move.MoveType() != HanabiMove::Type::kDeal;
+        auto move_type = item.move.MoveType();
+        return move_type != HanabiMove::Type::kDeal &&
+               move_type != HanabiMove::Type::kDealSpecific;
       });
   return it == past_moves.end() ? nullptr : &(*it);
 }

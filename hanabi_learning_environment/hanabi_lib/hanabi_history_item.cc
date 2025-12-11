@@ -57,7 +57,9 @@ std::string HanabiHistoryItem::ToString() const {
 
 void ChangeToObserverRelative(int observer_pid, int player_count,
                               HanabiHistoryItem* item) {
-  if (item->move.MoveType() == HanabiMove::kDeal) {
+  auto move_type = item->move.MoveType();
+  if (move_type == HanabiMove::kDeal ||
+      move_type == HanabiMove::kDealSpecific) {
     assert(item->player < 0 && item->deal_to_player >= 0);
     item->deal_to_player =
         (item->deal_to_player - observer_pid + player_count) % player_count;

@@ -10,7 +10,6 @@ def apply_move_to_state(state, move_spec):
     state: HanabiState instance to mutate.
     move_spec: dict with keys:
       - type: str name of HanabiMoveType (e.g., 'PLAY', 'REVEAL_COLOR').
-      - card_index: optional int
       - target_offset: optional int (player relative, or absolute for DEAL_SPECIFIC/RETURN)
       - color: optional int
       - rank: optional int

@@ -146,9 +146,9 @@ def test_obs_fireworks_matches_state_with_specific_deals():
       [(1, 0), (1, 1)],  # Player 1
   ]
   for pid, cards in enumerate(initial_hands):
-    for idx, (color, rank) in enumerate(cards):
+    for color, rank in cards:
       assert state.cur_player() == pyhanabi.CHANCE_PLAYER_ID
-      state.deal_specific_card(pid, color, rank, card_index=idx)
+      state.deal_specific_card(pid, color, rank)
 
   # Player 0 plays a 1, advancing the fireworks for color 0.
   assert state.cur_player() == 0

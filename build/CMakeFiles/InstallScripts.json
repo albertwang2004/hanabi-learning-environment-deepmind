@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/albert/hanabi-learning-environment-deepmind/build/cmake_install.cmake",
+		"/home/albert/hanabi-learning-environment-deepmind/build/hanabi_learning_environment/hanabi_lib/cmake_install.cmake",
+		"/home/albert/hanabi-learning-environment-deepmind/build/hanabi_learning_environment/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

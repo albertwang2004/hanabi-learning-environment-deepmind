@@ -594,14 +594,10 @@ class HanabiState(object):
     """If cur_player == CHANCE_PLAYER_ID, make a random card-deal move."""
     lib.StateDealRandomCard(self._state)
 
-  def deal_specific_card(self, player_id, color, rank, card_index=None):
-    """If cur_player == CHANCE_PLAYER_ID, make a specific card-deal move.
-
-    If card_index is None, the card is appended to the end of the player's hand.
-    """
+  def deal_specific_card(self, player_id, color, rank):
+    """If cur_player == CHANCE_PLAYER_ID, deal a specific card to end of hand."""
     assert self.cur_player() == CHANCE_PLAYER_ID
-    if card_index is None:
-      card_index = lib.StateGetHandSize(self._state, player_id)
+    card_index = lib.StateGetHandSize(self._state, player_id)
     move = HanabiMove.get_deal_specific_move(card_index, player_id, color, rank)
     self.apply_move(move)
 
@@ -622,10 +618,10 @@ class HanabiState(object):
     hand_size = lib.StateGetHandSize(self._state, player_id)
     for _ in range(hand_size):
         self.return_card(player_id, 0)
-    for card_index, card in enumerate(hand):
+    for card in hand:
         color = color_char_to_idx(card["color"])
         rank = card["rank"]
-        self.deal_specific_card(player_id, color, rank, card_index)
+        self.deal_specific_card(player_id, color, rank)
 
   def player_hands(self):
     """Returns a list of all hands, with cards ordered oldest to newest."""
