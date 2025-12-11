@@ -535,6 +535,9 @@ class HanabiState(object):
     NOTE: If c_state is supplied, game is ignored and c_state game is used.
     """
     self._state = ffi.new("pyhanabi_state_t*")
+    # Keep a reference to the owning HanabiGame to prevent its C++ object
+    # from being freed while this state is still alive.
+    self._game_owner = game
     if c_state is None:
       self._game = game.c_game
       lib.NewState(self._game, self._state)
@@ -544,7 +547,7 @@ class HanabiState(object):
 
   def copy(self):
     """Returns a copy of the state."""
-    return HanabiState(None, self._state)
+    return HanabiState(self._game_owner, self._state)
 
   def observation(self, player):
     """Returns player's observed view of current environment state."""
