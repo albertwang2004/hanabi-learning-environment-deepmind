@@ -1,6 +1,6 @@
 # ninja log v7
 1	186	1765410597259767210	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_card.cc.o	cf2b8b1fe47a3dd0
-3	354	1765410597261767231	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/util.cc.o	296c1f3805767f8d
+2	321	1765475159150198809	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/util.cc.o	296c1f3805767f8d
 2	324	1765410597260767221	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_history_item.cc.o	75a7981f03e966c
 2	305	1765410597261767231	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_move.cc.o	70744b09af512e32
 3	772	1765410597261767231	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/canonical_encoders.cc.o	891e0dcd4943e93d
@@ -8,11 +8,11 @@
 2	1085	1765410597260767221	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_game.cc.o	7f2ecd042e9c4a92
 3	755	1765410597261767231	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_observation.cc.o	fd720749a3ef083d
 2	1048	1765410597260767221	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_hand.cc.o	1cef092f1f079171
-2	18	1765423336252115790	hanabi_learning_environment/hanabi_lib/libhanabi.a	276b676ef8ebd120
+2	18	1765480559545108387	hanabi_learning_environment/hanabi_lib/libhanabi.a	1d0cdbdcfc829c1
 4	1050	1765410597262767242	hanabi_learning_environment/CMakeFiles/pyhanabi.dir/pyhanabi.cc.o	b2af1a389139031f
-18	131	1765423336268115956	hanabi_learning_environment/libpyhanabi.so	5df91a9ca19705cc
-131	140	1765423336381117124	CMakeFiles/install.util	964956a198ce9902
-2	287	1765426777601868675	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/util.cc.o	296c1f3805767f8d
-287	304	1765426777886871663	hanabi_learning_environment/hanabi_lib/libhanabi.a	93d2940be7019619
-305	392	1765426777904871852	hanabi_learning_environment/libpyhanabi.so	5df91a9ca19705cc
-392	397	1765426777991872764	CMakeFiles/install.util	a344bfb1740f5c22
+18	135	1765480559561108565	hanabi_learning_environment/libpyhanabi.so	5df91a9ca19705cc
+135	145	1765480559678109863	CMakeFiles/install.util	f8c297b126aed272
+2	1470	1765480887534747848	hanabi_learning_environment/hanabi_lib/CMakeFiles/hanabi.dir/hanabi_state.cc.o	5dfc6d8e69dec92f
+1470	1485	1765480889002764137	hanabi_learning_environment/hanabi_lib/libhanabi.a	93d32566c362bfb6
+1485	1576	1765480889017764304	hanabi_learning_environment/libpyhanabi.so	5df91a9ca19705cc
+1577	1585	1765480889109765325	CMakeFiles/install.util	55c5f8a1b2d05cee

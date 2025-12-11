@@ -16,6 +16,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
+import json
 from hanabi_learning_environment import pyhanabi
 from hanabi_learning_environment.pyhanabi import color_char_to_idx
 
@@ -490,10 +491,18 @@ class HanabiEnv(Environment):
       raise ValueError("Unknown action_type: {}".format(action_type))
 
     legal_moves = self.state.legal_moves()
-    assert (str(move) in map(
-        str,
-        legal_moves)), "Illegal action: {}. Move should be one of : {}".format(
-            move, legal_moves)
+    if str(move) not in map(str, legal_moves):
+      debug_info = {
+          "action_dict": action,
+          "constructed_move": str(move),
+          "legal_moves": [str(m) for m in legal_moves],
+          "current_player": self.state.cur_player(),
+          "information_tokens": self.state.information_tokens(),
+          "life_tokens": self.state.life_tokens(),
+      }
+      raise AssertionError(
+          "Illegal action provided. Context:\n{}".format(
+              json.dumps(debug_info, indent=2, sort_keys=True)))
 
     return move
 

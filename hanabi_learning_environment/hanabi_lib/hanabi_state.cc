@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <numeric>
 
 #include "util.h"
@@ -231,7 +232,14 @@ bool HanabiState::MoveIsLegal(HanabiMove move) const {
 }
 
 void HanabiState::ApplyMove(HanabiMove move) {
-  REQUIRE(MoveIsLegal(move));
+  bool legal = MoveIsLegal(move);
+  if (!legal) {
+    std::cerr << "Illegal move rejected in ApplyMove: " << move.ToString()
+              << "\nCurrent player: " << cur_player_
+              << "\nState before failure:\n"
+              << ToString() << std::endl;
+  }
+  REQUIRE(legal);
   // Special moves are virtual moves used to manipulate the game.
   bool special_move = move.MoveType() == HanabiMove::kDealSpecific ||
                       move.MoveType() == HanabiMove::kReturn;
