@@ -329,11 +329,7 @@ class HanabiMove(object):
     return lib.MoveRank(self._move)
 
   @staticmethod
-  def get_deal_specific_move(card_index=None, player=None, color=None, rank=None):
-    """Build a deal-specific move; pass card_index=None to append to hand."""
-    assert player is not None and color is not None and rank is not None
-    if card_index is None:
-      card_index = -1
+  def get_deal_specific_move(card_index, player, color, rank):
     c_move = ffi.new("pyhanabi_move_t*")
     assert lib.GetDealSpecificMove(card_index, player, color, rank, c_move)
     return HanabiMove(c_move)
@@ -591,15 +587,9 @@ class HanabiState(object):
     """If cur_player == CHANCE_PLAYER_ID, make a random card-deal move."""
     lib.StateDealRandomCard(self._state)
 
-  def deal_specific_card(self, player_id, color, rank, card_index=None):
-    """If cur_player == CHANCE_PLAYER_ID, make a specific card-deal move.
-
-    If card_index is None, the card is appended to the end of the player's
-    current hand (the same position as the default random deal).
-    """
+  def deal_specific_card(self, player_id, color, rank, card_index):
+    """If cur_player == CHANCE_PLAYER_ID, make a specific card-deal move."""
     assert self.cur_player() == CHANCE_PLAYER_ID
-    if card_index is None:
-      card_index = lib.StateGetHandSize(self._state, player_id)
     move = HanabiMove.get_deal_specific_move(card_index, player_id, color, rank)
     self.apply_move(move)
 

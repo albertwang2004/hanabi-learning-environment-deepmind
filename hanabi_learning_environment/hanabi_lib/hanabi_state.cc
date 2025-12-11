@@ -179,15 +179,6 @@ bool HanabiState::MoveIsLegal(HanabiMove move) const {
       if (deck_.CardCount(move.Color(), move.Rank()) == 0) {
         return false;
       }
-      if (move.MoveType() == HanabiMove::kDealSpecific) {
-        if (move.TargetOffset() < 0 || move.TargetOffset() >= hands_.size()) {
-          return false;
-        }
-        const int hand_size = hands_[move.TargetOffset()].Cards().size();
-        if (move.CardIndex() < -1 || move.CardIndex() > hand_size) {
-          return false;
-        }
-      }
       break;
     case HanabiMove::kDiscard:
       if (InformationTokens() >= ParentGame()->MaxInformationTokens()) {
@@ -270,14 +261,10 @@ void HanabiState::ApplyMove(HanabiMove move) {
           card_knowledge.ApplyIsColorHint(move.Color());
           card_knowledge.ApplyIsRankHint(move.Rank());
         }
-        const int hand_size = hands_[move.TargetOffset()].Cards().size();
-        const int insert_index =
-            move.CardIndex() < 0 ? hand_size : move.CardIndex();
-        REQUIRE(insert_index <= hand_size);
         hands_[move.TargetOffset()].InsertCard(
             deck_.DealCard(move.Color(), move.Rank()),
             card_knowledge,
-            insert_index);
+            move.CardIndex());
       }
       break;
     case HanabiMove::kDiscard:
