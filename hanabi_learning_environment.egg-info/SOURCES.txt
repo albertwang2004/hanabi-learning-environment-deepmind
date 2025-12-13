@@ -22,3 +22,7 @@ hanabi_learning_environment.egg-info/top_level.txt
 hanabi_learning_environment/agents/__init__.py
 hanabi_learning_environment/agents/random_agent.py
 hanabi_learning_environment/agents/simple_agent.py
+tests/test_deal_specific_card.py
+tests/test_move_application.py
+tests/test_observations.py
+tests/test_rollouts.py
