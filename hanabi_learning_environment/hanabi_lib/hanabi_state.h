@@ -116,7 +116,7 @@ class HanabiState {
     return move_history_;
   }
   int CardCountFromPerspective(int color, int rank, int player) const {
-    return deck_.CardCountExcludingHand(color, rank, Hands()[player]);
+    return deck_.CardCountExcludingHand(color, rank, Hands()[player].Cards());
   }
 
  private:
