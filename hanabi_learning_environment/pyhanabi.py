@@ -854,7 +854,7 @@ class HanabiObservation(object):
     """Construct using HanabiState.observation(player)."""
     self._observation = ffi.new("pyhanabi_observation_t*")
     self._game = game
-    self.player = player
+    self._player = player
     lib.NewObservation(state, player, self._observation)
 
   def __str__(self):
@@ -873,8 +873,8 @@ class HanabiObservation(object):
     del self
     
   # why is this not alr implemented???
-  def player(self):
-    return self.player
+  def get_player(self):
+    return self._player
 
   def observation(self):
     """Returns the C++ HanabiObservation object."""
