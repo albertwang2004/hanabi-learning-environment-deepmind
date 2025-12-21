@@ -139,6 +139,8 @@ int StateLenMoveHistory(pyhanabi_state_t* state);
 void StateGetMoveHistory(pyhanabi_state_t* state, int index,
                          pyhanabi_history_item_t* item);
 
+int StateCardCountFromPerspective(pyhanabi_state_t* state, int color, int rank, int player);
+
 /* Game functions. */
 void DeleteGame(pyhanabi_game_t* game);
 void NewDefaultGame(pyhanabi_game_t* game);

@@ -698,6 +698,9 @@ class HanabiState(object):
       lib.StateGetMoveHistory(self._state, i, c_history_item)
       history.append(HanabiHistoryItem(c_history_item))
     return history
+  
+  def card_count_from_perspective(self, color, rank, player):
+    return lib.StateCardCountFromPerspective(self._state, color, rank, player)
 
   def __str__(self):
     c_string = lib.StateToString(self._state)

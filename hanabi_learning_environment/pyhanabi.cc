@@ -511,6 +511,12 @@ void StateGetMoveHistory(pyhanabi_state_t* state, int index,
           .at(index));
 }
 
+int StateCardCountFromPerspective(pyhanabi_state_t* state, int color, int rank, int player) {
+  REQUIRE(state != nullptr);
+  return reinterpret_cast<const hanabi_learning_env::HanabiState*>(state->state)
+      ->CardCountFromPerspective(color, rank, player);
+}
+
 /* Wrapper definitions for HanabiGame. */
 void DeleteGame(pyhanabi_game_t* game) {
   REQUIRE(game != nullptr);
