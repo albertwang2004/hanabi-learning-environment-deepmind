@@ -43,7 +43,7 @@ class HanabiState {
     int CardCount(int color, int rank) const {
       return card_count_[CardToIndex(color, rank)];
     }
-    int CardCountExcludingHand(int color, int rank, vector<HanabiCard>& hand) const {
+    int CardCountExcludingHand(int color, int rank, std::vector<HanabiCard>& hand) const {
       int omniscient = CardCount(color, rank);
       for (HanabiCard card : hand) {
         if (card == HanabiCard(color, rank)) ++omniscient;
