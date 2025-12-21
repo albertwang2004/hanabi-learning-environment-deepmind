@@ -1,0 +1,1 @@
+{"args": ["/home/awang11/.conda/envs/hanabi/bin/cmake", "-DCMAKE_BUILD_TYPE:STRING=Release"], "version": "4.2.1", "environment": {"PYTHONNOUSERSITE": null, "PYTHONPATH": null}}
