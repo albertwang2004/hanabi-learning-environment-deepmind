@@ -732,6 +732,7 @@ class AgentObservationType(enum.IntEnum):
   MINIMAL = 0
   CARD_KNOWLEDGE = 1
   SEER = 2
+  RICH_CARD_KNOWLEDGE = 3
 
 
 class HanabiGame(object):

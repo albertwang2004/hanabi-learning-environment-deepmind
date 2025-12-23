@@ -36,7 +36,12 @@ class HanabiGame {
   // not revealed as red in a past <RevealColor Red> move". A Seer observation
   // shows all cards, including the player's own cards, regardless of what
   // hints have been given.
-  enum AgentObservationType { kMinimal = 0, kCardKnowledge = 1, kSeer = 2 };
+  enum AgentObservationType {
+    kMinimal = 0,
+    kCardKnowledge = 1,
+    kSeer = 2,
+    kRichCardKnowledge = 3 // with count masking for specific cards
+  };
 
   // Acceptable parameters:
   //

@@ -85,8 +85,9 @@ HanabiObservation::HanabiObservation(const HanabiState& state,
   //
   // Rule: if a specific (color,rank) has zero remaining copies in (deck + my
   // hidden hand), then none of my cards can be that exact (color,rank).
-  if (!hide_knowledge && !show_cards &&
-      state.ParentGame()->ObservationType() == HanabiGame::kCardKnowledge) {
+  if (!hide_knowledge && 
+      !show_cards &&
+      state.ParentGame()->ObservationType() == HanabiGame::kRichCardKnowledge) {
     const int num_colors = state.ParentGame()->NumColors();
     const int num_ranks = state.ParentGame()->NumRanks();
 
