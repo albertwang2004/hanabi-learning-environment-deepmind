@@ -511,6 +511,13 @@ void StateGetMoveHistory(pyhanabi_state_t* state, int index,
           .at(index));
 }
 
+int StateCardCount(pyhanabi_state_t* state, int color, int rank) {
+  REQUIRE(state != nullptr);
+  return reinterpret_cast<const hanabi_learning_env::HanabiState*>(state->state)
+      ->Deck().CardCount(color, rank);
+
+}
+
 int StateCardCountFromPerspective(pyhanabi_state_t* state, int color, int rank, int player) {
   REQUIRE(state != nullptr);
   return reinterpret_cast<const hanabi_learning_env::HanabiState*>(state->state)

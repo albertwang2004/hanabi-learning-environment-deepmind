@@ -699,6 +699,9 @@ class HanabiState(object):
       history.append(HanabiHistoryItem(c_history_item))
     return history
   
+  def card_count(self, color, rank):
+    return lib.StateCardCount(self._state, color, rank)
+  
   def card_count_from_perspective(self, color, rank, player):
     return lib.StateCardCountFromPerspective(self._state, color, rank, player)
 
@@ -732,6 +735,7 @@ class AgentObservationType(enum.IntEnum):
   MINIMAL = 0
   CARD_KNOWLEDGE = 1
   SEER = 2
+  RICH_CARD_KNOWLEDGE = 3
 
 
 class HanabiGame(object):

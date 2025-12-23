@@ -1,0 +1,1 @@
+/orcd/software/core/001/spack/pkg/gcc/12.2.0/yt6vabm/bin/g++ -fPIC -O2 -std=c++11 -fPIC -shared -Wl,-soname,libpyhanabi.so -o libpyhanabi.so CMakeFiles/pyhanabi.dir/pyhanabi.cc.o  hanabi_lib/libhanabi.a

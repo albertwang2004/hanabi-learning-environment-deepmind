@@ -138,7 +138,7 @@ bool CardPlayableOnFireworks(const pyhanabi_state_t* state, int color,
 int StateLenMoveHistory(pyhanabi_state_t* state);
 void StateGetMoveHistory(pyhanabi_state_t* state, int index,
                          pyhanabi_history_item_t* item);
-
+int StateCardCount(pyhanabi_state_t* state, int color, int rank);
 int StateCardCountFromPerspective(pyhanabi_state_t* state, int color, int rank, int player);
 
 /* Game functions. */
