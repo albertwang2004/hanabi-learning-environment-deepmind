@@ -41,22 +41,128 @@ void HanabiHand::ValueKnowledge::ApplyIsNotValueHint(int value) {
   value_plausible_[value] = false;
 }
 
+// ===== New joint (color,rank) plausibility CardKnowledge =====
+
 HanabiHand::CardKnowledge::CardKnowledge(int num_colors, int num_ranks)
-    : color_(num_colors), rank_(num_ranks) {}
+    : num_colors_(num_colors),
+      num_ranks_(num_ranks),
+      hinted_color_(-1),
+      hinted_rank_(-1),
+      plausible_(std::max(num_colors, 0) * std::max(num_ranks, 0), true) {
+  assert(num_colors_ > 0);
+  assert(num_ranks_ > 0);
+  assert(static_cast<int>(plausible_.size()) == num_colors_ * num_ranks_);
+}
+
+bool HanabiHand::CardKnowledge::ColorPlausible(int color) const {
+  assert(color >= 0 && color < num_colors_);
+  for (int r = 0; r < num_ranks_; ++r) {
+    if (plausible_[Index(color, r)]) return true;
+  }
+  return false;
+}
+
+bool HanabiHand::CardKnowledge::RankPlausible(int rank) const {
+  assert(rank >= 0 && rank < num_ranks_);
+  for (int c = 0; c < num_colors_; ++c) {
+    if (plausible_[Index(c, rank)]) return true;
+  }
+  return false;
+}
+
+bool HanabiHand::CardKnowledge::CardPlausible(int color, int rank) const {
+  assert(color >= 0 && color < num_colors_);
+  assert(rank >= 0 && rank < num_ranks_);
+  return plausible_[Index(color, rank)];
+}
+
+void HanabiHand::CardKnowledge::ApplyIsColorHint(int color) {
+  assert(color >= 0 && color < num_colors_);
+  assert(hinted_color_ < 0 || hinted_color_ == color);
+
+  // Must be compatible with existing plausibility.
+  bool any = false;
+  for (int r = 0; r < num_ranks_; ++r) any = any || plausible_[Index(color, r)];
+  assert(any);
+
+  hinted_color_ = color;
+  for (int c = 0; c < num_colors_; ++c) {
+    if (c == color) continue;
+    for (int r = 0; r < num_ranks_; ++r) plausible_[Index(c, r)] = false;
+  }
+
+  // Should not eliminate everything.
+  bool any_after = false;
+  for (bool b : plausible_) any_after = any_after || b;
+  assert(any_after);
+}
+
+void HanabiHand::CardKnowledge::ApplyIsNotColorHint(int color) {
+  assert(color >= 0 && color < num_colors_);
+  assert(hinted_color_ < 0 || hinted_color_ != color);
+
+  for (int r = 0; r < num_ranks_; ++r) plausible_[Index(color, r)] = false;
+
+  bool any_after = false;
+  for (bool b : plausible_) any_after = any_after || b;
+  assert(any_after);
+}
+
+void HanabiHand::CardKnowledge::ApplyIsRankHint(int rank) {
+  assert(rank >= 0 && rank < num_ranks_);
+  assert(hinted_rank_ < 0 || hinted_rank_ == rank);
+
+  bool any = false;
+  for (int c = 0; c < num_colors_; ++c) any = any || plausible_[Index(c, rank)];
+  assert(any);
+
+  hinted_rank_ = rank;
+  for (int r = 0; r < num_ranks_; ++r) {
+    if (r == rank) continue;
+    for (int c = 0; c < num_colors_; ++c) plausible_[Index(c, r)] = false;
+  }
+
+  bool any_after = false;
+  for (bool b : plausible_) any_after = any_after || b;
+  assert(any_after);
+}
+
+void HanabiHand::CardKnowledge::ApplyIsNotRankHint(int rank) {
+  assert(rank >= 0 && rank < num_ranks_);
+  assert(hinted_rank_ < 0 || hinted_rank_ != rank);
+
+  for (int c = 0; c < num_colors_; ++c) plausible_[Index(c, rank)] = false;
+
+  bool any_after = false;
+  for (bool b : plausible_) any_after = any_after || b;
+  assert(any_after);
+}
+
+void HanabiHand::CardKnowledge::ApplyIsNotCard(int color, int rank) {
+  assert(color >= 0 && color < num_colors_);
+  assert(rank >= 0 && rank < num_ranks_);
+
+  // If both were directly hinted, banning that exact pair is a contradiction.
+  assert(!(hinted_color_ == color && hinted_rank_ == rank));
+
+  plausible_[Index(color, rank)] = false;
+
+  bool any_after = false;
+  for (bool b : plausible_) any_after = any_after || b;
+  assert(any_after);
+}
 
 std::string HanabiHand::CardKnowledge::ToString() const {
   std::string result;
   result = result + (ColorHinted() ? ColorIndexToChar(Color()) : 'X') +
            (RankHinted() ? RankIndexToChar(Rank()) : 'X') + '|';
-  for (int c = 0; c < color_.Range(); ++c) {
-    if (color_.IsPlausible(c)) {
-      result += ColorIndexToChar(c);
-    }
+
+  // Preserve old-style summary: list plausible colors, then plausible ranks.
+  for (int c = 0; c < num_colors_; ++c) {
+    if (ColorPlausible(c)) result += ColorIndexToChar(c);
   }
-  for (int r = 0; r < rank_.Range(); ++r) {
-    if (rank_.IsPlausible(r)) {
-      result += RankIndexToChar(r);
-    }
+  for (int r = 0; r < num_ranks_; ++r) {
+    if (RankPlausible(r)) result += RankIndexToChar(r);
   }
   return result;
 }

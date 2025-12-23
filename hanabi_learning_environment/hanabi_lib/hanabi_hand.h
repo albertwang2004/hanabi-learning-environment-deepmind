@@ -57,36 +57,54 @@ class HanabiHand {
   };
 
   class CardKnowledge {
-    // Hinted knowledge about color and rank of an initially unknown card.
+    // Knowledge about an initially unknown card.
+    //
+    // IMPORTANT: We represent plausibility at the (color, rank) PAIR level.
+    // This is necessary to express deductions like "not G5" without excluding
+    // all Green or all 5s. We still separately track whether color/rank were
+    // DIRECTLY hinted (to preserve the "no inference" semantics).
    public:
     CardKnowledge(int num_colors, int num_ranks);
-    // Returns number of possible colors being tracked.
-    int NumColors() const { return color_.Range(); }
-    // Returns true if and only if the exact color was revealed.
-    // Does not perform inference to get a known color from not-color hints.
-    bool ColorHinted() const { return color_.ValueHinted(); }
-    // Color of card if it was hinted, -1 if not hinted.
-    int Color() const { return color_.Value(); }
-    // Returns true if we have no hint saying card is not the given color.
-    bool ColorPlausible(int color) const { return color_.IsPlausible(color); }
-    void ApplyIsColorHint(int color) { color_.ApplyIsValueHint(color); }
-    void ApplyIsNotColorHint(int color) { color_.ApplyIsNotValueHint(color); }
-    // Returns number of possible ranks being tracked.
-    int NumRanks() const { return rank_.Range(); }
-    // Returns true if and only if the exact rank was revealed.
-    // Does not perform inference to get a known rank from not-rank hints.
-    bool RankHinted() const { return rank_.ValueHinted(); }
-    // Rank of card if it was hinted, -1 if not hinted.
-    int Rank() const { return rank_.Value(); }
-    // Returns true if we have no hint saying card is not the given rank.
-    bool RankPlausible(int rank) const { return rank_.IsPlausible(rank); }
-    void ApplyIsRankHint(int rank) { rank_.ApplyIsValueHint(rank); }
-    void ApplyIsNotRankHint(int rank) { rank_.ApplyIsNotValueHint(rank); }
+
+    int NumColors() const { return num_colors_; }
+    int NumRanks() const { return num_ranks_; }
+
+    // Directly revealed flags (do NOT infer from plausibility).
+    bool ColorHinted() const { return hinted_color_ >= 0; }
+    int Color() const { return hinted_color_; }  // -1 if not directly hinted.
+    bool RankHinted() const { return hinted_rank_ >= 0; }
+    int Rank() const { return hinted_rank_; }    // -1 if not directly hinted.
+
+    // Backwards-compatible plausibility queries (derived from pair mask).
+    bool ColorPlausible(int color) const;
+    bool RankPlausible(int rank) const;
+
+    // Exact pair plausibility (the key new capability).
+    bool CardPlausible(int color, int rank) const;
+
+    // Hint updates (public reveals): constrain the pair mask appropriately.
+    void ApplyIsColorHint(int color);
+    void ApplyIsNotColorHint(int color);
+    void ApplyIsRankHint(int rank);
+    void ApplyIsNotRankHint(int rank);
+
+    // Exact elimination of one specific card value.
+    void ApplyIsNotCard(int color, int rank);
+
     std::string ToString() const;
 
    private:
-    ValueKnowledge color_;
-    ValueKnowledge rank_;
+    int Index(int color, int rank) const { return color * num_ranks_ + rank; }
+
+    int num_colors_ = 0;
+    int num_ranks_ = 0;
+
+    // -1 means "not directly hinted" (we do NOT infer).
+    int hinted_color_ = -1;
+    int hinted_rank_ = -1;
+
+    // color-major: plausible_[color * num_ranks_ + rank]
+    std::vector<bool> plausible_;
   };
 
   HanabiHand() {}
@@ -98,9 +116,12 @@ class HanabiHand {
   // Cards and corresponding card knowledge are always arranged from oldest to
   // newest, with the oldest card or knowledge at index 0.
   const std::vector<HanabiCard>& Cards() const { return cards_; }
-  const std::vector<CardKnowledge>& Knowledge() const {
-    return card_knowledge_;
-  }
+  const std::vector<CardKnowledge>& Knowledge() const { return card_knowledge_; }
+
+  // Mutable access to knowledge (intended for per-observer post-processing in
+  // HanabiObservation; safe because HanabiObservation holds copies of hands).
+  std::vector<CardKnowledge>& MutableKnowledge() { return card_knowledge_; }
+
   void AddCard(HanabiCard card, const CardKnowledge& initial_knowledge);
   // Insert the specified card while maintaining knowledge about the card.
   void InsertCard(HanabiCard card, const CardKnowledge& initial_knowledge,

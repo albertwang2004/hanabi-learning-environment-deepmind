@@ -347,24 +347,7 @@ int CardKnowledgeSectionLength(const HanabiGame& game) {
 // Encode the common card knowledge.
 // For each card/position in each player's hand, including the observing player,
 // encode the possible cards that could be in that position and whether the
-// color and rank were directly revealed by a Reveal action. Possible card
-// values are in color-major order, using <num_colors> * <num_ranks> bits per
-// card. For example, if you knew nothing about a card, and a player revealed
-// that is was green, the knowledge would be encoded as follows.
-// R    Y    G    W    B
-// 0000000000111110000000000   Only green cards are possible.
-// 0    0    1    0    0       Card was revealed to be green.
-// 00000                       Card rank was not revealed.
-//
-// Similarly, if the player revealed that one of your other cards was green, you
-// would know that this card could not be green, resulting in:
-// R    Y    G    W    B
-// 1111111111000001111111111   Any card that is not green is possible.
-// 0    0    0    0    0       Card color was not revealed.
-// 00000                       Card rank was not revealed.
-// Uses <num_players> * <hand_size> *
-// (<num_colors> * <num_ranks> + <num_colors> + <num_ranks>) bits.
-// Returns the number of entries written to the encoding.
+// color and rank were directly revealed by a Reveal action.
 int EncodeCardKnowledge(const HanabiGame& game, const HanabiObservation& obs,
                         int start_offset, std::vector<int>* encoding) {
   int bits_per_card = BitsPerCard(game);
@@ -382,13 +365,11 @@ int EncodeCardKnowledge(const HanabiGame& game, const HanabiObservation& obs,
     int num_cards = 0;
 
     for (const HanabiHand::CardKnowledge& card_knowledge : knowledge) {
-      // Add bits for plausible card.
+      // Add bits for plausible card (EXACT PAIRS).
       for (int color = 0; color < num_colors; ++color) {
-        if (card_knowledge.ColorPlausible(color)) {
-          for (int rank = 0; rank < num_ranks; ++rank) {
-            if (card_knowledge.RankPlausible(rank)) {
-              (*encoding)[offset + CardIndex(color, rank, num_ranks)] = 1;
-            }
+        for (int rank = 0; rank < num_ranks; ++rank) {
+          if (card_knowledge.CardPlausible(color, rank)) {
+            (*encoding)[offset + CardIndex(color, rank, num_ranks)] = 1;
           }
         }
       }
@@ -434,6 +415,9 @@ std::vector<int> CanonicalObservationEncoder::Shape() const {
 
 std::vector<int> CanonicalObservationEncoder::Encode(
     const HanabiObservation& obs) const {
+
+  // cout << "the guy was run" << endl;
+
   // Make an empty bit string of the proper size.
   std::vector<int> encoding(FlatLength(Shape()), 0);
 

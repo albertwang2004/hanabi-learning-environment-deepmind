@@ -67,7 +67,9 @@ HanabiObservation::HanabiObservation(const HanabiState& state,
   hands_.reserve(state.Hands().size());
   const bool hide_knowledge =
       state.ParentGame()->ObservationType() == HanabiGame::kMinimal;
-  const bool show_cards = state.ParentGame()->ObservationType() == HanabiGame::kSeer;
+  const bool show_cards =
+      state.ParentGame()->ObservationType() == HanabiGame::kSeer;
+
   hands_.push_back(
       HanabiHand(state.Hands()[observing_player], !show_cards, hide_knowledge));
   for (int offset = 1; offset < state.ParentGame()->NumPlayers(); ++offset) {
@@ -75,6 +77,70 @@ HanabiObservation::HanabiObservation(const HanabiState& state,
                                               state.ParentGame()->NumPlayers()],
                                 false, hide_knowledge));
   }
+
+  // ===== Per-observer exact-card count masking (NO LEAKAGE) =====
+  //
+  // Apply ONLY to the observing player's own hand knowledge (hands_[0]) and
+  // ONLY for non-minimal, non-seer observations.
+  //
+  // Rule: if a specific (color,rank) has zero remaining copies in (deck + my
+  // hidden hand), then none of my cards can be that exact (color,rank).
+  if (!hide_knowledge && !show_cards &&
+      state.ParentGame()->ObservationType() == HanabiGame::kCardKnowledge) {
+    const int num_colors = state.ParentGame()->NumColors();
+    const int num_ranks = state.ParentGame()->NumRanks();
+
+    auto idx = [num_ranks](int c, int r) { return c * num_ranks + r; };
+
+    std::vector<int> seen(num_colors * num_ranks, 0);
+
+    // Seen in other players' hands (hands_[1..]).
+    for (int p = 1; p < state.ParentGame()->NumPlayers(); ++p) {
+      for (const HanabiCard& card : hands_[p].Cards()) {
+        assert(card.IsValid());
+        seen[idx(card.Color(), card.Rank())] += 1;
+      }
+    }
+
+    // Seen in discard pile.
+    for (const HanabiCard& card : discard_pile_) {
+      assert(card.IsValid());
+      seen[idx(card.Color(), card.Rank())] += 1;
+    }
+
+    // Seen on fireworks: for each color c, ranks [0..fireworks[c)-1] are played.
+    for (int c = 0; c < num_colors; ++c) {
+      int k = fireworks_[c];
+      for (int r = 0; r < k; ++r) {
+        seen[idx(c, r)] += 1;
+      }
+    }
+
+    // Compute hiddenCount(color,rank) = totalInstances - seenElsewhere.
+    std::vector<int> hidden(num_colors * num_ranks, 0);
+    for (int c = 0; c < num_colors; ++c) {
+      for (int r = 0; r < num_ranks; ++r) {
+        int total = state.ParentGame()->NumberCardInstances(c, r);
+        int h = total - seen[idx(c, r)];
+        // If this fails, something is inconsistent (e.g., illegal deck edits).
+        assert(h >= 0);
+        hidden[idx(c, r)] = h;
+      }
+    }
+
+    // Apply exact bans to every card slot in the observing player's hand.
+    auto& my_knowledge = hands_[0].MutableKnowledge();
+    for (auto& ck : my_knowledge) {
+      for (int c = 0; c < num_colors; ++c) {
+        for (int r = 0; r < num_ranks; ++r) {
+          if (hidden[idx(c, r)] == 0) {
+            ck.ApplyIsNotCard(c, r);
+          }
+        }
+      }
+    }
+  }
+  // ===== End per-observer exact-card count masking =====
 
   const auto& history = state.MoveHistory();
   auto start = std::find_if(history.begin(), history.end(),
