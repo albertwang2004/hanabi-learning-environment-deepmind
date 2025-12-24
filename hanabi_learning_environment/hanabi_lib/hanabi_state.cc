@@ -173,22 +173,40 @@ int HanabiState::PlayerToDeal() const {
 bool HanabiState::MoveIsLegal(HanabiMove move) const {
   switch (move.MoveType()) {
     case HanabiMove::kDealSpecific:
-    case HanabiMove::kDeal:
+
+
+
+    case HanabiMove::kDeal: {
       if (cur_player_ != kChancePlayerId) {
         return false;
       }
       if (deck_.CardCount(move.Color(), move.Rank()) == 0) {
         return false;
       }
-      break;
-    case HanabiMove::kDiscard:
-      if (InformationTokens() >= ParentGame()->MaxInformationTokens()) {
-        return false;
+
+      if (move.MoveType() == HanabiMove::kDealSpecific) {
+        int pid = move.TargetOffset();
+        if (pid < 0 || pid >= static_cast<int>(hands_.size())) {
+          return false;
+        }
+
+        int hs = static_cast<int>(hands_[pid].Cards().size());
+        int idx = move.CardIndex();
+        // Allow -1 (append) or insertion into [0..hs].
+        if (!(idx == -1 || (0 <= idx && idx <= hs))) {
+          return false;
+        }
+        // Also enforce the standard dealing rule: only deal to a player who is short.
+        if (hands_[pid].Cards().size() >= ParentGame()->HandSize()) {
+          return false;
+        }
       }
-      if (move.CardIndex() >= hands_[cur_player_].Cards().size()) {
-        return false;
-      }
       break;
+    }
+
+
+
+
     case HanabiMove::kPlay:
       if (move.CardIndex() >= hands_[cur_player_].Cards().size()) {
         return false;
@@ -220,11 +238,19 @@ bool HanabiState::MoveIsLegal(HanabiMove move) const {
       }
       break;
     }
-    case HanabiMove::kReturn:
-      if (move.CardIndex() >= hands_[move.TargetOffset()].Cards().size()) {
+    case HanabiMove::kReturn: {
+      int pid = move.TargetOffset();
+      if (pid < 0 || pid >= static_cast<int>(hands_.size())) {
+        return false;
+      }
+      int idx = move.CardIndex();
+      int hs = static_cast<int>(hands_[pid].Cards().size());
+      if (idx < 0 || idx >= hs) {
         return false;
       }
       break;
+    }
+
     default:
       return false;
   }
@@ -232,6 +258,7 @@ bool HanabiState::MoveIsLegal(HanabiMove move) const {
 }
 
 void HanabiState::ApplyMove(HanabiMove move) {
+  std::cout << "Applying move: " << move.ToString() << std::endl;
   bool legal = MoveIsLegal(move);
   if (!legal) {
     std::cerr << "Illegal move rejected in ApplyMove: " << move.ToString()

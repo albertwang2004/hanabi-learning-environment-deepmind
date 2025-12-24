@@ -194,6 +194,13 @@ void HanabiHand::InsertCard(HanabiCard card,
                             const CardKnowledge& initial_knowledge,
                             int card_index) {
   REQUIRE(card.IsValid());
+
+  // Treat -1 as "append to end" (Python uses this convention).
+  if (card_index < 0) {
+    card_index = static_cast<int>(cards_.size());
+  }
+  REQUIRE(card_index >= 0 && card_index <= static_cast<int>(cards_.size()));
+
   cards_.insert(cards_.begin() + card_index, card);
   card_knowledge_.insert(card_knowledge_.begin() + card_index,
                          initial_knowledge);
