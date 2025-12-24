@@ -258,7 +258,7 @@ bool HanabiState::MoveIsLegal(HanabiMove move) const {
 }
 
 void HanabiState::ApplyMove(HanabiMove move) {
-  std::cout << "Applying move: " << move.ToString() << std::endl;
+  // std::cout << "Applying move: " << move.ToString() << std::endl;
   bool legal = MoveIsLegal(move);
   if (!legal) {
     std::cerr << "Illegal move rejected in ApplyMove: " << move.ToString()
